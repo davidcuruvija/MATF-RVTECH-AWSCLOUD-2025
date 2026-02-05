@@ -51,7 +51,7 @@ A web application for finding electric vehicle chargers. The application uses da
 ### Local Development
 
 ```bash
-npm run reset
+npm run restart
 ```
 
 This command:

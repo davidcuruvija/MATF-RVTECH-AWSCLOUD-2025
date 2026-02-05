@@ -18,7 +18,7 @@ provider:
 
 functions:                          		# Sekcija koja definiše Lambda funkcije
   syncOCMdata:                      		# Naziv funkcije (logički ID)
-    handler: index.handler          		# Fajl.nazivFunkcije (index.js exports.handler)
+    handler: lambda/syncOCM.handler          		# Fajl.nazivFunkcije (index.js exports.handler)
     description: Sync data from Open Charge Map
     role: SyncOCMDataRole           		# Referenca na IAM rolu definisanu u resources
     events:                         		# Okidači za ovu funkciju
@@ -29,7 +29,7 @@ functions:                          		# Sekcija koja definiše Lambda funkcije
           path: sync/{countryCode}      # Putanja: /sync/<kod drzave>
           method: get               		# HTTP metoda: GET
   getChargersByTown:
-    handler: getChargersByTown.handler
+    handler: lambda/getChargersByTown.handler
     description: Get chargers by town using GSI TownIndex
     role: SyncOCMDataRole
     events:
@@ -37,7 +37,7 @@ functions:                          		# Sekcija koja definiše Lambda funkcije
           path: chargers/{town}
           method: get
   getAllChargers:
-    handler: getAllChargers.handler
+    handler: lambda/getAllChargers.handler
     description: Get all chargers using ScanCommand
     role: SyncOCMDataRole
     events:
