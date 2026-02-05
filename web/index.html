@@ -122,8 +122,8 @@
       <div class="search-form">
         <input type="text" id="townInput" placeholder="Unesite grad (npr. Belgrade)" value="Belgrade" />
         <button id="searchBtn">Pretraži</button>
-        <button id="syncBtn" class="sync-btn">Sync OCM</button>
         <input type="text" id="countryCode" placeholder="Unesite kod države (npr. RS)" value="RS" />
+        <button id="syncBtn" class="sync-btn">Sync OCM</button>
       </div>
       <div id="status"></div>
     </header>
@@ -274,6 +274,15 @@
         const countryCode = document.getElementById('countryCode').value.trim();
         if(countryCode) {
           syncOCM(countryCode);
+        }
+      });
+
+      document.getElementById('countryCode').addEventListener('keypress', (e)=>{
+        if(e.key === 'Enter') {
+          const countryCode = document.getElementById('countryCode').value.trim();
+          if(countryCode) {
+            syncOCM(countryCode);
+          }
         }
       });
 
