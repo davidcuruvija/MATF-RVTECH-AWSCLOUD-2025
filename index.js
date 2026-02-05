@@ -23,15 +23,20 @@ const client = new DynamoDBClient({
 // (nije potrebna { S: "value" } sintaksa)
 const docClient = DynamoDBDocumentClient.from(client);
 
-exports.handler = async () => {
+exports.handler = async (event) => {
   console.log("Fetching OCM chargers...");
+
+  var countrycode = event.pathParameters?.countryCode;
+  if(!countrycode) {
+    countrycode = 'RS';
+  }
 
   try {
     // Preuzmi podatke sa OCM API-ja
     const MAX_RESULTS = 1000; // za Srbiju ima oko 110 punjača na OCM API-ju
     const params = new URLSearchParams({
       key: OCM_API_KEY,
-      countrycode: 'RS',
+      countrycode: countrycode,
       maxresults: MAX_RESULTS,
       compact: true,
       verbose: false,

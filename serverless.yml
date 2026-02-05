@@ -25,7 +25,7 @@ functions:                          		# Sekcija koja definiše Lambda funkcije
           rate: rate(1 minute)      		# Pokreće se svakog minuta (CloudWatch Events)
       # olakšava demonstraciju na LocalStack-u, ali nije potrebno za projekat
       - http:                       		# API Gateway HTTP endpoint
-          path: sync                		# Putanja: /sync
+          path: sync/{countryCode}      # Putanja: /sync/<kod drzave>
           method: get               		# HTTP metoda: GET
   getChargersByTown:
     handler: getChargersByTown.handler
