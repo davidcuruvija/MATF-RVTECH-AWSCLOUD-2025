@@ -6,7 +6,9 @@
   "scripts": {
     "deploy-frontend": "S3_BUCKET_NAME=${npm_config_s3_bucket_name:-punjaci-website} && awslocal s3 sync ./web s3://$S3_BUCKET_NAME",
     "deploy-frontend-fixed-bucket": "awslocal s3 sync ./web s3://punjaci-website",
-    "redeploy": "docker-compose down -v && docker-compose up -d && sleep 5 && npx serverless deploy"
+    "redeploy": "docker-compose down -v && docker-compose up -d && sleep 5 && npx serverless deploy",
+    "generate-config": "API_ID=$(awslocal apigateway get-rest-apis --query 'items[0].id' --output text) && echo \"const CONFIG = { API_ID: '$API_ID', get API_BASE_URL() { return \\`http://localhost:4566/restapis/\\${this.API_ID}/dev/_user_request_\\`; } };\" > ./web/config.js",
+    "deploy-frontend-auto": "npm run generate-config && npm run deploy-frontend-fixed-bucket"
   },
   "author": "",
   "license": "ISC",
