@@ -203,9 +203,10 @@
         document.getElementById('status').textContent = `Prikazano ${chargers.length} punjača`;
       }
 
-      async function searchAndUpdate(endpoint) {
+      async function searchAndUpdate(endpoint, btnId) {
         const status = document.getElementById('status');
-        const searchBtn = document.getElementById('searchBtn');
+        const searchBtn = document.getElementById(btnId);
+        const searchBtnText = searchBtn.textContent
 
         searchBtn.disabled = true;
         searchBtn.textContent = 'Učitavanje...';
@@ -226,13 +227,13 @@
           console.error(error);
         } finally {
           searchBtn.disabled = false;
-          searchBtn.textContent = 'Pretraži';
+          searchBtn.textContent = searchBtnText;
         }
       }
 
       // Pretraga punjača po gradu
       async function searchChargers(town) {
-        searchAndUpdate(`/chargers/${encodeURIComponent(town)}`)
+        searchAndUpdate(`/chargers/${encodeURIComponent(town)}`, 'searchBtn')
       }
 
       // Ovo je više za demonstraciju poziva Lambde koja ažurira DynamoDB tabelu punjača
@@ -267,7 +268,7 @@
       });
 
       document.getElementById('showAll').addEventListener('click', () => {
-        searchAndUpdate("/allChargers");
+        searchAndUpdate("/allChargers", 'showAll');
       });
 
       document.getElementById('townInput').addEventListener('keypress', (e) => {
