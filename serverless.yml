@@ -35,6 +35,14 @@ functions:                          		# Sekcija koja definiše Lambda funkcije
       - http:
           path: chargers/{town}
           method: get
+  getAllChargers:
+    handler: getAllChargers.handler
+    description: Get all chargers using ScanCommand
+    role: SyncOCMDataRole
+    events:
+      - http:
+          path: allChargers
+          method: get
 
 resources:                          		# CloudFormation resursi sekcija
   Resources:                        		# AWS resursi za kreiranje
