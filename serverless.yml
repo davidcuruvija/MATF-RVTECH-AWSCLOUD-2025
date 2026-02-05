@@ -14,6 +14,7 @@ provider:
     OCM_API_KEY: '69d86e58-df21-406b-b837-cc07c35ddd41'   # API ključ za Open Charge Map
     OCM_URL: 'https://api.openchargemap.io/v3/poi'        # URL za OCM API
     CHARGERS_TABLE: Chargers        		# Naziv DynamoDB tabele
+    SETTINGS_TABLE: Settings        		
 
 functions:                          		# Sekcija koja definiše Lambda funkcije
   syncOCMdata:                      		# Naziv funkcije (logički ID)
@@ -70,6 +71,17 @@ resources:                          		# CloudFormation resursi sekcija
         # TimeToLiveSpecification:
         #   AttributeName: ttl      		# Atribut koji sadrži Unix timestamp isteka
         #   Enabled: true           		# DynamoDB automatski briše istekle zapise
+    SettingsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.SETTINGS_TABLE}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: settingId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: settingId
+            KeyType: HASH
     # S3 bucket za statički veb sajt
     WebsiteBucket:                  		# S3 bucket za statički sajt
       Type: AWS::S3::Bucket         		# CloudFormation tip resursa
@@ -117,6 +129,7 @@ resources:                          		# CloudFormation resursi sekcija
                   Resource:
                     - !GetAtt ChargersTable.Arn                              # ARN tabele
                     - !Join ['/', [!GetAtt ChargersTable.Arn, 'index/*']]    # ARN indeksa
+                    - !GetAtt SettingsTable.Arn                              
           - PolicyName: CloudWatchLogs    # Polisa za Lambda logove
             PolicyDocument:
               Version: "2012-10-17"

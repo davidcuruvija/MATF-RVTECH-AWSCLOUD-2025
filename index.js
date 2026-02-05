@@ -1,9 +1,10 @@
 const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
-const { DynamoDBDocumentClient, BatchWriteCommand, ScanCommand } = require('@aws-sdk/lib-dynamodb');
+const { DynamoDBDocumentClient, BatchWriteCommand, ScanCommand, PutCommand, GetCommand } = require('@aws-sdk/lib-dynamodb');
 
 const OCM_API_KEY = process.env.OCM_API_KEY;
 const OCM_URL = process.env.OCM_URL;
 const TABLE_NAME = process.env.CHARGERS_TABLE;
+const SETTINGS_TABLE = process.env.SETTINGS_TABLE;
 const BATCH_SIZE = 25;  // DynamoDB BatchWriteItem limit (maks 25 stavki po batch-u)
 
 // Konfiguracija DynamoDB klijenta za LocalStack
@@ -28,7 +29,12 @@ exports.handler = async (event) => {
 
   var countrycode = event.pathParameters?.countryCode;
   if(!countrycode) {
-    countrycode = 'RS';
+    const settingsResult = await docClient.send(new GetCommand({
+      TableName: SETTINGS_TABLE,
+      Key: { settingId: 'lastCountryCode' },
+    }));
+    countrycode = settingsResult.Item?.value || 'RS';
+    console.log(`Using saved countryCode: ${countrycode}`);
   }
 
   try {
@@ -146,6 +152,16 @@ exports.handler = async (event) => {
       console.log(`Deleted ${deletedCount} stale records`);
     }
     // ------------------------------------------------------------
+
+    await docClient.send(new PutCommand({
+      TableName: SETTINGS_TABLE,
+      Item: {
+        settingId: 'lastCountryCode',
+        value: countrycode,
+        updatedAt: new Date().toISOString(),
+      },
+    }));
+    console.log(`Saved lastCountryCode: ${countrycode}`);
 
     return {
       statusCode: 200,
